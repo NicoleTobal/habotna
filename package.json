@@ -1,0 +1,12 @@
+{
+  "name": "habotna",
+  "scripts": {
+    "start": "node app/server.js"
+  },
+  "engines": {
+    "node": ">=9.6.1"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "0.30.0"
+  }
+}
