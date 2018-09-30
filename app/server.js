@@ -32,6 +32,27 @@ bot.onText(/\/comprar (.+)/, (msg, match) => {
   bot.sendMessage(chatId, response);
 });
 
+// Matches "/echo [whatever]"
+bot.onText(/(.+)/, (msg, match) => {
+  // 'msg' is the received Message from Telegram
+  // 'match' is the result of executing the regexp above on the text content
+  // of the message
+
+  if (msg.text.includes('/comprar ')) {
+    return;
+  }
+
+  const chatId = msg.chat.id;
+
+  // send back the matched "whatever" to the chat
+  bot.sendMessage(chatId, 'No conozco ese mensaje');
+});
+
+const wakeupApp = async () => {
+  await fetch("https://habotna.herokuapp.com");
+  setTimeout(wakeupApp, 1200000);
+}
+
 // // Listen for any kind of message. There are different kinds of
 // // messages.
 // bot.on('message', (msg) => {
@@ -42,6 +63,7 @@ bot.onText(/\/comprar (.+)/, (msg, match) => {
 // });
 
 var server = http.createServer(function(req, res) {
+  wakeupApp();
 });
 
 
