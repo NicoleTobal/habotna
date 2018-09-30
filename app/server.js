@@ -1,66 +1,64 @@
 const TelegramBot = require('node-telegram-bot-api');
 var http = require('http');
 
-// replace the value below with the Telegram token you receive from @BotFather
 const token = process.env.BOT_TOKEN;
 
-// Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
 
-// Matches "/echo [whatever]"
 bot.onText(/\/start/, (msg, match) => {
 
   const chatId = msg.chat.id;
 
   bot.sendMessage(chatId, 'Hola, estoy usando un contestador automático. Funciona con '+
     'comandos, los cuales se indican en la lista a continuacion: \n ' +
-    '/comprar'
+    '- Para consultar el precio de compra de una moneda: /comprar \n' +
+    '- Para consultar el precio de venta de una moneda: /vender'
    );
 });
 
-// Matches "/echo [whatever]"
-bot.onText(/\/comprar (.+)/, (msg, match) => {
-  // 'msg' is the received Message from Telegram
-  // 'match' is the result of executing the regexp above on the text content
-  // of the message
+const parseMessage = (messageType, message) => {
 
-  const chatId = msg.chat.id;
+  const chatId = message.chat.id;
 
-  const response = msg.text === '/comprar bitcoin' ? 'US$6329' : 'No conozco esa moneda';
+  bot.sendMessage(chatId, 'Que moneda desea '+ messageType + '? \n' +
+    '- /dolar \n' +
+    '- /euro \n' +
+    '- /bitcoin'
+  );
 
-  // send back the matched "whatever" to the chat
-  bot.sendMessage(chatId, response);
+  bot.onText(/\/bitcoin/, (msg, match) => {
+    bot.sendMessage(chatId, 'US$6329');
+  });
+  bot.onText(/\/dolar/, (msg, match) => {
+    bot.sendMessage(chatId, '$42');
+  });
+  bot.onText(/\/euro/, (msg, match) => {
+    bot.sendMessage(chatId, '$');
+  });
+
+};
+
+bot.onText(/\/comprar/, (msg, match) => {
+  parseMessage('comprar', msg);
 });
 
-// Matches "/echo [whatever]"
-bot.onText(/(.+)/, (msg, match) => {
-  // 'msg' is the received Message from Telegram
-  // 'match' is the result of executing the regexp above on the text content
-  // of the message
+bot.onText(/\/vender/, (msg, match) => {
+  parseMessage('vender', msg);
+});
 
-  if (msg.text.includes('/comprar ')) {
+bot.onText(/(.+)/, (msg, match) => {
+
+  if (['/start','/comprar', '/vender', '/bitcoin', '/dolar', '/euro'].includes(msg.text)) {
     return;
   }
-
   const chatId = msg.chat.id;
-
-  // send back the matched "whatever" to the chat
   bot.sendMessage(chatId, 'No conozco ese mensaje');
 });
 
 const wakeupApp = async () => {
-  await fetch("https://habotna.herokuapp.com");
+  await fetch("https://habotna.herokuapp.com", () => console.log('FETCH'));
   setTimeout(wakeupApp, 1200000);
 }
-
-// // Listen for any kind of message. There are different kinds of
-// // messages.
-// bot.on('message', (msg) => {
-//   const chatId = msg.chat.id;
-
-//   // send a message to the chat acknowledging receipt of their message
-//   bot.sendMessage(chatId, 'Received your message');
-// });
 
 var server = http.createServer(function(req, res) {
   wakeupApp();
