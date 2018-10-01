@@ -21,48 +21,72 @@ const parseMessage = (messageType, message) => {
   const chatId = message.chat.id;
 
   bot.sendMessage(chatId, 'Que moneda desea '+ messageType + '? \n' +
-    '- /dolar \n' +
-    '- /euro \n' +
-    '- /bitcoin'
+    '- /' + messageType + '_dolar\n' +
+    '- /' + messageType + '_euro \n' +
+    '- /' + messageType + '_bitcoin'
   );
-
-  bot.onText(/\/bitcoin/, (msg, match) => {
-    bot.sendMessage(chatId, 'US$6329');
-  });
-  bot.onText(/\/dolar/, (msg, match) => {
-    bot.sendMessage(chatId, '$42');
-  });
-  bot.onText(/\/euro/, (msg, match) => {
-    bot.sendMessage(chatId, '$');
-  });
 
 };
 
 bot.onText(/\/comprar/, (msg, match) => {
-  parseMessage('comprar', msg);
+  if (msg.text === '/comprar') {
+    parseMessage('comprar', msg);
+  }
 });
 
 bot.onText(/\/vender/, (msg, match) => {
-  parseMessage('vender', msg);
+  if (msg.text === '/vender') {
+    parseMessage('vender', msg);
+  }
+});
+
+bot.onText(/\/comprar_bitcoin/, (msg, match) => {
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, 'US$6329');
+});
+bot.onText(/\/comprar_dolar/, (msg, match) => {
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, '$42');
+});
+bot.onText(/\/comprar_euro/, (msg, match) => {
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, '$50');
+});
+
+bot.onText(/\/vender_bitcoin/, (msg, match) => {
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, 'US$7000');
+});
+bot.onText(/\/vender_dolar/, (msg, match) => {
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, '$43');
+});
+bot.onText(/\/vender_euro/, (msg, match) => {
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, '$52');
 });
 
 bot.onText(/(.+)/, (msg, match) => {
 
-  if (['/start','/comprar', '/vender', '/bitcoin', '/dolar', '/euro'].includes(msg.text)) {
+  if (['/start','/comprar', '/vender',
+    '/comprar_bitcoin', '/comprar_dolar', '/comprar_euro',
+    '/vender_bitcoin', '/vender_dolar', '/vender_euro'
+  ].includes(msg.text)) {
     return;
   }
   const chatId = msg.chat.id;
   bot.sendMessage(chatId, 'No conozco ese mensaje');
 });
 
-const wakeupApp = async () => {
-  await fetch("https://habotna.herokuapp.com", () => console.log('FETCH'));
-  setTimeout(wakeupApp, 1200000);
+const wakeupApp = () => {
+  http.request("http://habotna.herokuapp.com", function() {
+    console.log('Waking up the app');
+  }).end(' ');
+  return setTimeout(wakeupApp, 1200000);
 }
 
-var server = http.createServer(function(req, res) {
+var server = http.createServer((req, res) => {});
+
+server.listen(process.env.PORT, () => {
   wakeupApp();
 });
-
-
-server.listen(process.env.PORT);
