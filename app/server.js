@@ -79,8 +79,8 @@ bot.onText(/(.+)/, (msg, match) => {
 });
 
 const wakeupApp = () => {
-  http.request("http://habotna.herokuapp.com", function() {
-    console.log('Waking up the app');
+  http.get("http://habotna.herokuapp.com", (res) => {
+    console.log('Waking up the app: ', res);
   }).end(' ');
   return setTimeout(wakeupApp, 60000);
 }
