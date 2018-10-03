@@ -82,7 +82,7 @@ const wakeupApp = () => {
   http.request("http://habotna.herokuapp.com", function() {
     console.log('Waking up the app');
   }).end(' ');
-  return setTimeout(wakeupApp, 1200000);
+  return setTimeout(wakeupApp, 60000);
 }
 
 var server = http.createServer((req, res) => {});
