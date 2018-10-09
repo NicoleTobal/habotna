@@ -78,8 +78,8 @@ bot.onText(/(.+)/, (msg, match) => {
   bot.sendMessage(chatId, 'No conozco ese mensaje');
 });
 
-const wakeupApp = () => {
-  http.get("http://habotna.herokuapp.com", (res) => {
+const wakeupApp = async () => {
+  await http.get("http://habotna.herokuapp.com", (res) => {
     console.log('Waking up the app: ', res);
   }).end(' ');
   return setTimeout(wakeupApp, 60000);
