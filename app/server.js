@@ -1,5 +1,6 @@
 const TelegramBot = require('node-telegram-bot-api');
 var http = require('http');
+const fetch = require('node-fetch');
 
 const token = process.env.BOT_TOKEN;
 
@@ -79,10 +80,14 @@ bot.onText(/(.+)/, (msg, match) => {
 });
 
 const wakeupApp = async () => {
-  await http.get("http://habotna.herokuapp.com", (res) => {
-    console.log('Waking up the app: ', res);
-  }).end(' ');
-  return setTimeout(wakeupApp, 60000);
+  fetch('http://habotna.herokuapp.com', { 
+        method: 'get',
+        timeout: 1200000
+    })
+    .then((res) => {
+      console.log('Waking up the app: ', res);
+      setTimeout(wakeupApp, 60000);
+    });
 }
 
 var server = http.createServer((req, res) => {});
